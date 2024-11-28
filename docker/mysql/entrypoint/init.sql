@@ -1,0 +1,13 @@
+-- CREATE DATABASE app;
+-- GRANT ALL PRIVILEGES ON DATABASE app TO admin;
+
+USE app;
+CREATE TABLE users (
+    id INT AUTO_INCREMENT,
+    email VARCHAR(255) UNIQUE,
+    name VARCHAR(100),
+    password VARCHAR(255),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id)
+);
