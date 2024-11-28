@@ -1,0 +1,33 @@
+name: Deploy to server
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+    build:
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Copy .env
+          run: cd application && touch .env && echo -e "${{ secrets.ENV }}" > .env
+        - name: Install Dependencies
+          run: cd application && composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        - name: Directory Permissions
+          run: chmod -R 777 application/storage/*
+
+        - name: Generate ssh key
+          run: echo "$SSH_PRIVATE_KEY" > key && chmod 600 key
+          env:
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+        - name: Deploy
+          run: rsync --rsync-path="sudo rsync" -rlptgoD --chown=$SSH_USER:$SSH_GROUP --delete -e "ssh -i ./key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${SSH_PORT}" application/ $SSH_USER@$SSH_HOST:$DEPLOY_PATH
+          env:
+            SSH_USER: ${{ secrets.SSH_USER }}
+            SSH_GROUP: ${{ secrets.SSH_GROUP }}
+            SSH_PORT: ${{ secrets.SSH_PORT }}
+            DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+            SSH_HOST: ${{ secrets.SSH_HOST }}
