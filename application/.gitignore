@@ -1,0 +1,11 @@
+/vendor
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+/storage/views/*
+!/storage/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/images/*
+!/storage/images/.gitkeep
+!/storage/images/noimage.jpg
+/.env

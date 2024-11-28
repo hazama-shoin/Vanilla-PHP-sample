@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会員情報編集</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-container">
+            <div class="menu-toggle">
+                ☰
+                <nav class="dropdown-menu">
+                    <div class="menu-profile">
+                        <a href="../profile/1.html">
+                            <img src="../../images/avatar1.jpg" alt="アバター" class="menu-avatar">
+                        </a>
+                        <span class="menu-name">田中 太郎</span>
+                    </div>
+                    <ul>
+                        <li><a href="../user-list.html">ホーム</a></li>
+                        <li><a href="../../index.html">ログアウト</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <a href="../user-list.html" class="header-title">会員管理システム</a>
+            <div class="search-icon" id="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        <!-- 検索バー -->
+        <div class="search-bar" id="search-bar" style="display: none;">
+            <input type="text" id="search-input" placeholder="会員を検索...">
+            <button id="search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- メッセージバナー -->
+    <div id="message-banner" class="hidden"></div>
+
+    <!-- 会員情報編集フォーム -->
+    <div class="container">
+        <h1>会員情報編集</h1>
+        <form id="edit-profile-form" onsubmit="onRegisterSubmit(event, '../user-list.html', '会員情報を更新しました。', false);">
+            <label for="name">名前</label>
+            <input type="text" id="name" name="name" value="田中 太郎" maxlength="100" required>
+
+            <label for="email">メールアドレス</label>
+            <input type="email" id="email" name="email" value="taro@example.com" maxlength="255" required>
+
+            <label for="password">パスワード</label>
+            <input type="password" id="password" name="password" minlength="8" maxlength="32">
+
+            <label for="avatar">アバター画像</label>
+            <div>
+                <!-- プレビュー画像 -->
+                <img id="avatar-preview" class="avatar" src="../../images/avatar1_150x150.jpg" alt="アバターのプレビュー" style="margin-bottom: 10px;">
+                <input type="file" id="avatar" name="avatar" accept="image/*">
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" id="submit-button" class="btn">保存</button>
+            </div>
+        </form>
+        <!-- ホーム画面に戻るリンク -->
+        <div class="back-link">
+            <a href="../user-list.html" class="btn link-btn">ホーム画面に戻る</a>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+</html>
