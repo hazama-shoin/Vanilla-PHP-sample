@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Controllers\Api;
+
+use App\Controllers\Controller;
+use App\Models\User;
+use App\Utilities\CommonHelper;
+
+class UserController extends Controller
+{
+    private User $userModel;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->userModel = new User();
+    }
+
+    /**
+     * 会員登録処理
+     *
+     * @param array $request
+     */
+    public function store(array $request): void
+    {
+        if (!isset($request['email']) || !isset($request['name']) || !isset($request['password'])) {
+            $this->apiResponse(400, '会員登録に失敗しました。');
+            return;
+        }
+
+        $avatarId = '';
+        if (!empty($request['avatar']) && is_string($request['avatar'])) {
+            $avatar = $request['avatar'];
+            $avatarId = CommonHelper::base64ToImage($avatar);
+            if (!$avatarId) {
+                $this->apiResponse(400, '会員登録に失敗しました。');
+                return;
+            }
+        }
+
+        $userModel = new User();
+        $statusCode = 200;
+        $message = '会員登録が完了しました。';
+        if (!$userModel->store($request['email'], $request['name'], $request['password'], $avatarId, $request['is_admin'])) {
+            $statusCode = 400;
+            $message = '会員登録に失敗しました。';
+        };
+        $this->apiResponse($statusCode, $message);
+    }
+
+    /**
+     * 会員情報編集処理
+     *
+     * @param int $id
+     * @param array $request
+     */
+    public function update(int $id, array $request): void
+    {
+        $avatarId = '';
+        if (!empty($request['avatar']) && is_string($request['avatar'])) {
+            $avatar = $request['avatar'];
+            $avatarId = CommonHelper::base64ToImage($avatar);
+            if (!$avatarId) {
+                $this->apiResponse(400, '会員情報の更新に失敗しました。');
+                return;
+            }
+        }
+
+        $email = $request['email'];
+        $name = $request['name'];
+        $password = $request['password'];
+        $isAdmin = $request['is_admin'];
+
+        $statusCode = 200;
+        $message = '会員情報を更新しました。';
+        if (!$this->userModel->update($id, $email, $name, $password, $avatarId, $isAdmin)) {
+            $statusCode = 400;
+            $message = '会員情報の更新に失敗しました。';
+        }
+        if ($id === $_SESSION['user']['id']) {
+            $user = $this->userModel->get($id)[0] ?? $_SESSION['user'];
+            $_SESSION['user'] = $user;
+        }
+        $this->apiResponse($statusCode, $message);
+    }
+
+    /**
+     * 会員を削除
+     *
+     * @param int $id
+     */
+    public function delete(int $id): void
+    {
+        // 自分自身の場合は削除しない
+        if ($_SESSION['user']['id'] === $id) {
+            $this->apiResponse(400, 'ログイン中の会員は削除できません。');
+            return;
+        }
+
+        $statusCode = 200;
+        $message = "会員ID: {$id} の削除に成功しました。";
+        if (!$this->userModel->softDelete($id)) {
+            $statusCode = 400;
+            $message = "会員ID: {$id} の削除に失敗しました。";
+        }
+        $this->apiResponse($statusCode, $message);
+    }
+}
