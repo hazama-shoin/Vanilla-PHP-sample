@@ -7,9 +7,6 @@ Laravel等を使わずにPHPでMVCモデルを的なことをやるサンプル�
 
 デモ環境: <https://member-management.hazama-shoin.com/>
 
-モック環境: <https://hazama-shoin.github.io/Vanilla-PHP-sample/>  
-※こちらはモック環境なので、実際のデータ登録・削除などの実行はできません。
-
 ## セットアップ手順
 
 1. [Docker Desktop](https://docs.docker.com/desktop/) をインストール
