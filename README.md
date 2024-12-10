@@ -7,7 +7,7 @@ Laravel等フレームワークを使わずにPHPでMVCモデルを的なもの�
 
 ## デモ環境
 
-[https://member-management.hazama-shoin.com/](https://member-management.hazama-shoin.com/){:target="_blank"}
+<https://member-management.hazama-shoin.com/>
 
 ## 利用方法
 
