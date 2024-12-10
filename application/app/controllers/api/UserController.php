@@ -126,16 +126,15 @@ class UserController extends Controller
     private function sendRegistedMail(string $name, string $email): bool
     {
         $subject = '【会員管理システム】会員登録が完了いたしました。';
-        $siteSslEnabled = ($_ENV['APP_SSL_ENABLED'] === 'true') ? true : false;
-        $sitePrefix = $siteSslEnabled ? 'https' : 'http';
-        $siteHost = $_ENV['APP_HOST'] ?? 'localhost:8080';
-        $body =
-            '※このメールはシステムから自動送信されています。返信は受け付けておりません。<br><br>'
-            . $name . ' 様<br><br>'
-            . 'この度は会員管理システムにご登録いただき、誠にありがとうございます。<br><br>'
-            . '会員登録が完了いたしましたのでお知らせいたします。<br><br>'
-            . '<a href="' . $sitePrefix . '://' . $siteHost . '/">ログインページ</a>';
         $from = $_ENV['MAIL_FROM_ADDRESS'] ?? null;
+
+        $this->smarty->assign('name', $name);
+        $this->smarty->assign(
+            'sitePrefix',
+            ($_ENV['APP_SSL_ENABLED'] === 'true') ? 'https' : 'http'
+        );
+        $this->smarty->assign('siteHost', $_ENV['APP_HOST'] ?? 'localhost:8080');
+        $body = $this->smarty->fetch('mails/registed_mail.tpl');
 
         return $this->mailer->sendMail($email, $subject, $body, $from);
     }

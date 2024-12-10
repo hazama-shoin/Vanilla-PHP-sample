@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Utilities\CommonHelper;
 
 class RegisterController extends Controller
 {
@@ -47,10 +48,7 @@ class RegisterController extends Controller
             return false;
         }
 
-        $key = $_ENV['APP_TOKEN_ENCRYPT_KEY'] ?? '';
-        $iv = $_ENV['APP_TOKEN_ENCRYPT_IV'] ?? '';
-        $json = openssl_decrypt(hex2bin($token), 'AES-256-CBC', $key, 0, $iv);
-        $parameters = json_decode($json, true) ?? [];
+        $parameters = CommonHelper::decodeHexString($token);
         if (!$parameters || empty($parameters)) {
             return false;
         }

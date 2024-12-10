@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\Controller;
 use App\Models\User;
+use App\Utilities\CommonHelper;
 use App\Utilities\Mailer;
 
 class MailController extends Controller
@@ -45,22 +46,20 @@ class MailController extends Controller
             return;
         }
 
-        $key = $_ENV['APP_TOKEN_ENCRYPT_KEY'] ?? '';
-        $iv = $_ENV['APP_TOKEN_ENCRYPT_IV'] ?? '';
         $tokenParam = ['name' => $name, 'email' => $email];
-        $token = bin2hex(openssl_encrypt(json_encode($tokenParam), 'AES-256-CBC', $key, 0, $iv));
+        $token = CommonHelper::encodeHexString($tokenParam);
 
         $subject = '【会員管理システム】会員登録のご案内';
-        $siteSslEnabled = ($_ENV['APP_SSL_ENABLED'] === 'true') ? true : false;
-        $sitePrefix = $siteSslEnabled ? 'https' : 'http';
-        $siteHost = $_ENV['APP_HOST'] ?? 'localhost:8080';
-        $body =
-            '※このメールはシステムから自動送信されています。返信は受け付けておりません。<br><br>'
-            . $name . ' 様<br><br>'
-            . 'この度は会員管理システムの会員登録にお申込みいただき、誠にありがとうございます。<br><br>'
-            . '下記のリンクより本登録の完了をお願い申し上げます。<br><br>'
-            . '<a href="' . $sitePrefix . '://' . $siteHost . '/register/?token=' . $token . '">会員登録</a>';
         $from = $_ENV['MAIL_FROM_ADDRESS'] ?? null;
+
+        $this->smarty->assign('name', $name);
+        $this->smarty->assign(
+            'sitePrefix',
+            ($_ENV['APP_SSL_ENABLED'] === 'true') ? 'https' : 'http'
+        );
+        $this->smarty->assign('siteHost', $_ENV['APP_HOST'] ?? 'localhost:8080');
+        $this->smarty->assign('token', $token);
+        $body = $this->smarty->fetch('mails/register_mail.tpl');
 
         $statusCode = 200;
         $message = '会員登録メールを送信しました。メールに記載したリンクから本登録を行ってください。';

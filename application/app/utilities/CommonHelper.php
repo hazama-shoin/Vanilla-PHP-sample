@@ -131,4 +131,35 @@ class CommonHelper
             return false;
         }
     }
+
+    /**
+     * 配列を元に16進数文字列を生成
+     *
+     * @param array $value
+     * @return string|false
+     */
+    public static function encodeHexString(array $value): string|false
+    {
+        $key = $_ENV['APP_TOKEN_ENCRYPT_KEY'] ?? '';
+        $iv = $_ENV['APP_TOKEN_ENCRYPT_IV'] ?? '';
+        $json = json_encode($value);
+        if (!$json) {
+            return false;
+        }
+        return bin2hex(openssl_encrypt($json, 'AES-256-CBC', $key, 0, $iv));
+    }
+
+    /**
+     * encodeHexStringで生成した16進数文字列を配列に戻す
+     *
+     * @param string $value
+     * @return array|false
+     */
+    public static function decodeHexString(string $value): array|false
+    {
+        $key = $_ENV['APP_TOKEN_ENCRYPT_KEY'] ?? '';
+        $iv = $_ENV['APP_TOKEN_ENCRYPT_IV'] ?? '';
+        $json = openssl_decrypt(hex2bin($value), 'AES-256-CBC', $key, 0, $iv);
+        return json_decode($json, true) ?? false;
+    }
 }
